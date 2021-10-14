@@ -5,10 +5,13 @@ import {Photo} from './types/Photos'
 import {PhotoItem} from './components/photoItem';
 
 
+
+
 function App() {
   const [uploading , setUploading] = useState(false); 
   const [loading, setLoading] = useState(false);
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [value, setValue] = useState('');
 
   useEffect(()=>{
       const getPhotos = async () =>{
@@ -43,16 +46,32 @@ const handleFormSubmit = async (e: FormEvent<HTMLFormElement> )=>{ // cancela o 
 
 
 }
+const handleFormDelete = async (e: FormEvent<HTMLFormElement> )=>{ // cancela o envio de arquivo por padrão
+  e.preventDefault();
+
+  const handleFormDelete = new FormData(e.currentTarget);
+ 
+}
 
   return (
     <C.Container>
       <C.Area>
           <C.Header>Galeria de Fotos</C.Header>
+          <C.FormArea>
             <C.UploadForm method="POST" onSubmit={handleFormSubmit}>
                 <input type="file" name="image"/>
                 <input type="submit" value ="Enviar"/>
                 {uploading && "Enviando..."}
+
+                      
             </C.UploadForm>
+                  <C.DeleteForm method="POST"  >
+                      <input type="text" onChange={(e) => setValue(e.target.value)}/>
+                      <input type="submit" value="Delete"/>
+                       </C.DeleteForm>
+            
+                       </C.FormArea>
+          
 
           {loading &&
             <C.ScreenWarning> 
@@ -62,10 +81,14 @@ const handleFormSubmit = async (e: FormEvent<HTMLFormElement> )=>{ // cancela o 
             }
             {!loading && photos.length > 0 &&
               <C.PhotoList>
+                
                   {photos.map((item,index)=>(
+                    
                       <PhotoItem key={index} url={item.url} name={item.name}/>
+                     
 
                   ))}
+                  
                   </C.PhotoList>
             }      
             {!loading && photos.length === 0 &&
